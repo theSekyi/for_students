@@ -25,9 +25,11 @@ password = "blue_ginger_1523"
 database = "weather_data"
 
 
-def export_table_as_csv(database_list, csv_name):
+def export_table_as_csv(database_list, headers, csv_name):
     opened_csv = open(csv_name, "w")
     historic_data_file = csv.writer(opened_csv)
+    historic_data_file.writerow(headers)
+
     historic_data_file.writerows(database_list)
     opened_csv.close()
 
@@ -39,16 +41,21 @@ cursor = connection.cursor()
 # cmd = """SHOW TABLES FROM weather_data;"""
 
 
-select_data = """SELECT * FROM value_types;"""
+select_data = """SELECT * FROM historic_data;"""
 
 cursor.execute(select_data)
 
+headers = [x[0] for x in cursor.description]
+
+
 return_list = cursor.fetchall()
 
-export_table_as_csv(database_list=return_list, csv_name="value_types.csv")
+
+export_table_as_csv(database_list=return_list, headers=headers, csv_name="historic_data.csv")
 
 
 # print(return_list)
+# print(columns)
 
 cursor.close()
 connection.close()
